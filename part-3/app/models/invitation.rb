@@ -1,6 +1,17 @@
 # frozen_string_literal: true
 
 class Invitation < ApplicationRecord
+  before_save :set_default_status
+  after_save :send_notification
+
+  private
+
+  def send_notification
+    AdminMailer.invitation_notification(invitation, comment)
+  end
+
+  def set_default_status
+    self.status ||= 'pending'
 end
 
 
