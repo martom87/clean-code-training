@@ -1,8 +1,8 @@
 # frozen_string_literal: true
+require 'bill_counter'
+require 'sms_notifier'
 
 class TipsProcessor
-
-  TAX = 0.05
 
   def initialize(form:)
     @form = form
@@ -21,19 +21,10 @@ class TipsProcessor
   end
 
   def total_amount
-    form.amount + tax - discount + tip
-  end
-
-  def tax
-    form.amount * TAX
-  end
-
-  def discount
-    form.amount * (form.discount_percentage / 100.0)
-  end
-
-  def tip
-    form.amount * (form.tip_percentage / 100.0)
+    BillCounter.new(form: form).call
   end
 
 end
+
+mocked_form = { amount: 100, discount_percentage:0, tax_rate: 0.05, tip_percentage: 1  }
+TipsProcessor.new(form: mocked_form).call
